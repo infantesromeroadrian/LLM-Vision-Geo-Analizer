@@ -1,0 +1,22 @@
+# Django dependencies
+django==4.2.10
+django-crispy-forms==2.1
+crispy-bootstrap5==2023.10
+whitenoise==6.6.0
+
+# Vision and AI capabilities (from original project)
+langchain==0.1.5
+google-generativeai==0.3.2
+pillow==10.1.0
+opencv-python==4.9.0.80
+numpy==1.26.3
+
+# Geolocation and metadata extraction
+exifread==3.0.0
+geopy==2.4.1
+folium==0.15.0
+
+# Utils
+python-dotenv==1.0.0
+requests==2.31.0
+django-environ==0.11.2 

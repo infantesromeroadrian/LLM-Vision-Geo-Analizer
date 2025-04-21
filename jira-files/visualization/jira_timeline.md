@@ -125,24 +125,48 @@ El proyecto está organizado en 8 épicas principales:
 - Tareas completadas: 2/5 (40%)
 - Bloqueantes: 1
 
+### Sprint 5 (26/06/2023 - 09/07/2023)
+
+#### Objetivos del Sprint
+- Finalización del modo producción
+- Mejora y refactorización de componentes clave
+- Completar documentación y guías de usuario
+
+#### Tareas (En progreso/Pendientes)
+- **DRONE-020**: Mejora de extracción de metadatos EXIF 🔄
+- Continuación de **DRONE-016**: Implementación del modo producción 🔄
+- Continuación de **DRONE-017**: Documentación técnica 🔄
+- Continuación de **DRONE-018**: Creación de guía de usuario 📅
+
+#### Progreso de Épicas
+- DRONE-EPIC-002: Revisión y mejora (95%)
+- DRONE-EPIC-007: Continuando (70%)
+- DRONE-EPIC-008: En progreso (30%)
+
+#### Métricas
+- Velocidad del Sprint (Proyectada): 15 puntos
+- Tareas completadas: 0/4 (0%)
+- Bloqueantes: 0
+
 ## Estado Actual del Proyecto
 
 ### Progreso General
 - **Épicas completadas**: 6/8
-- **Tareas completadas**: 16/19
-- **Progreso general**: 84%
+- **Tareas completadas**: 16/20
+- **Progreso general**: 80%
 
 ### Próximos Pasos
-1. Finalizar el modo de producción (DRONE-016)
-2. Completar documentación técnica (DRONE-017)
-3. Desarrollar guía de usuario (DRONE-018)
-4. Entrega final del proyecto
+1. Finalizar mejora de extracción de metadatos EXIF (DRONE-020)
+2. Finalizar el modo de producción (DRONE-016)
+3. Completar documentación técnica (DRONE-017)
+4. Desarrollar guía de usuario (DRONE-018)
+5. Entrega final del proyecto
 
 ### Distribución del Esfuerzo
 ```mermaid
 pie
     title Distribución de Esfuerzo por Áreas - Drone-Osint-GeoSpy
-    "Visión y Análisis" : 30
+    "Visión y Análisis" : 35
     "Geolocalización" : 25
     "Interfaz de Usuario" : 20
     "API y Backend" : 15
@@ -185,6 +209,7 @@ gantt
     Modo producción (DRONE-016) :e1, 2023-06-15, 4d
     Documentación técnica (DRONE-017)     :e2, 2023-06-17, 5d
     Guía de usuario (DRONE-018)     :e3, 2023-06-20, 5d
+    Mejora extractor metadatos (DRONE-020) :e4, 2023-06-15, 8d
 ```
 
 ## Diagrama de Arquitectura del Sistema

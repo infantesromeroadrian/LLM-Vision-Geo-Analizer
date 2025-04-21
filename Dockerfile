@@ -26,23 +26,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create and set work directory
 WORKDIR /app
 
-# Copy requirements file
-COPY requirements.txt /app/
+# Copy project files first
+COPY . /app/
 
-# Install Python dependencies
+# Install backend requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
-COPY . /app/
+# Install Django frontend requirements if they exist
+RUN if [ -f src/django_frontend/requirements.txt ]; then \
+      pip install --no-cache-dir -r src/django_frontend/requirements.txt; \
+    else \
+      echo "Django requirements not found"; \
+    fi
 
 # Make sure the entrypoint script is executable
 RUN chmod +x /app/docker-entrypoint.sh
 
+# Create media directory for Django
+RUN mkdir -p /app/src/django_frontend/media
+
 # Set up volume for data persistence
 VOLUME ["/app/data"]
 
-# Expose ports - Both backend and frontend
-EXPOSE 8000 8501
+# Expose ports - Backend and Django Frontend
+EXPOSE 8000 8080
 
 # Set entrypoint 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

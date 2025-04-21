@@ -1,0 +1,905 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Drone Stream Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map-3d {
+        width: 100%;
+        height: 500px;
+        border-radius: 3px;
+        margin-bottom: 20px;
+    }
+    
+    .control-panel {
+        margin-bottom: 20px;
+    }
+    
+    .map-layers {
+        margin-bottom: 15px;
+    }
+    
+    .drone-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .drone-status {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        background-color: rgba(5, 8, 15, 0.8);
+        border: 1px solid var(--cyber-blue);
+        padding: 12px;
+        border-radius: 3px;
+        margin-bottom: 15px;
+    }
+    
+    .status-item {
+        display: flex;
+        flex-direction: column;
+        min-width: 100px;
+    }
+    
+    .status-label {
+        color: var(--cyber-teal);
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .status-value {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--cyber-accent);
+    }
+    
+    .analysis-results {
+        background-color: rgba(10, 75, 145, 0.2);
+        border: 1px solid var(--cyber-blue);
+        border-radius: 3px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .terminal-output {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .route-uploader {
+        background-color: rgba(10, 75, 145, 0.2);
+        border: 1px solid var(--cyber-blue);
+        border-radius: 3px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .file-upload-wrapper {
+        position: relative;
+        margin-top: 10px;
+    }
+    
+    .file-upload-input {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+    }
+    
+    .file-upload-button {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        background-color: rgba(0, 184, 212, 0.2);
+        border: 1px dashed var(--cyber-teal);
+        color: var(--cyber-accent);
+        border-radius: 3px;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .file-upload-button:hover {
+        background-color: rgba(0, 184, 212, 0.3);
+        border-color: var(--cyber-accent);
+    }
+    
+    .route-info {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+    
+    .route-info.success {
+        color: var(--cyber-green);
+    }
+    
+    .route-info.error {
+        color: var(--cyber-red);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card-military mb-4">
+            <div class="card-header">
+                <h2>DRONE STREAM ANALYSIS</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Mapa principal 3D -->
+                        <div id="map-3d"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Panel de control -->
+                        <div class="control-panel">
+                            <h5 class="sidebar-heading">CONTROL PANEL</h5>
+                            
+                            <!-- Carga de ruta personalizada -->
+                            <div class="route-uploader">
+                                <label class="status-label">CUSTOM ROUTE DATA</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="route-file" class="file-upload-input" accept=".gpx,.kml,.json,.csv,.geojson" title="Upload route file (GPX, KML, GeoJSON, CSV)">
+                                    <div class="file-upload-button">
+                                        <i class="fas fa-upload"></i> UPLOAD ROUTE FILE
+                                    </div>
+                                </div>
+                                <div id="route-info" class="route-info">
+                                    Supported formats: GPX, KML, GeoJSON, CSV
+                                </div>
+                            </div>
+                            
+                            <!-- Estilos de mapa -->
+                            <div class="map-layers">
+                                <label class="status-label">MAP TYPE</label>
+                                <div class="btn-group w-100" role="group">
+                                    <button type="button" class="btn btn-military" id="style-default">DEFAULT</button>
+                                    <button type="button" class="btn btn-military" id="style-satellite">SATELLITE</button>
+                                    <button type="button" class="btn btn-military" id="style-night">NIGHT</button>
+                                    <button type="button" class="btn btn-military" id="style-terrain">TERRAIN</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Controles de drone -->
+                            <div class="drone-controls">
+                                <button class="btn btn-military" id="toggle-path">
+                                    <i class="fas fa-route"></i> PATH
+                                </button>
+                                <button class="btn btn-military" id="toggle-heatmap">
+                                    <i class="fas fa-fire"></i> HEATMAP
+                                </button>
+                                <button class="btn btn-military" id="toggle-viewshed">
+                                    <i class="fas fa-eye"></i> VIEWSHED
+                                </button>
+                                <button class="btn btn-military" id="toggle-geofence">
+                                    <i class="fas fa-draw-polygon"></i> GEOFENCE
+                                </button>
+                            </div>
+                            
+                            <!-- Estado del drone -->
+                            <div class="drone-status">
+                                <div class="status-item">
+                                    <div class="status-label">LATITUDE</div>
+                                    <div class="status-value" id="drone-lat">--.--.--</div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">LONGITUDE</div>
+                                    <div class="status-value" id="drone-lng">--.--.--</div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">ALTITUDE</div>
+                                    <div class="status-value" id="drone-alt">--- m</div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">SPEED</div>
+                                    <div class="status-value" id="drone-speed">--- km/h</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Simulación de livestream -->
+                            <div class="text-center mb-3">
+                                <button class="btn btn-military" id="start-stream">
+                                    <i class="fas fa-play"></i> START STREAM
+                                </button>
+                                <button class="btn btn-military" id="stop-stream" disabled>
+                                    <i class="fas fa-stop"></i> STOP
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel de resultados de análisis -->
+                <div class="analysis-results">
+                    <h5 class="sidebar-heading">REAL-TIME ANALYSIS</h5>
+                    <div class="terminal-text terminal-output" id="analysis-output">
+                        System initialized. Awaiting drone connection...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Turf.js para análisis espacial -->
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+<!-- Mapbox Draw para geocercas -->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.css" rel="stylesheet">
+
+<!-- Bibliotecas para parsear formatos de archivo -->
+<script src="https://unpkg.com/@tmcw/togeojson@5.6.2/dist/togeojson.umd.js"></script>
+<script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
+
+<!-- Nuestro script personalizado de Mapbox -->
+<script src="{% static 'js/mapbox-advanced.js' %}"></script>
+
+<script>
+    // Configuración de Mapbox
+    mapboxgl.accessToken = '{{ mapbox_token }}';
+    
+    // Datos simulados por defecto
+    const defaultSimulationData = {
+        dronePathPoints: [
+            [-74.006, 40.7128, 150], // Nueva York (o coordenadas simuladas)
+            [-74.004, 40.7135, 180],
+            [-74.001, 40.7140, 200],
+            [-73.998, 40.7148, 220],
+            [-73.995, 40.7155, 210],
+            [-73.992, 40.7160, 190],
+            [-73.990, 40.7168, 170],
+            [-73.987, 40.7172, 150],
+            [-73.984, 40.7180, 130],
+            [-73.982, 40.7185, 120],
+            [-73.979, 40.7190, 110]
+        ],
+        heatmapPoints: [
+            { lng: -73.99, lat: 40.73, weight: 0.8 },
+            { lng: -73.985, lat: 40.735, weight: 0.5 },
+            { lng: -73.995, lat: 40.72, weight: 0.3 },
+            { lng: -73.98, lat: 40.725, weight: 0.9 },
+            { lng: -73.992, lat: 40.718, weight: 0.6 },
+            { lng: -74.003, lat: 40.714, weight: 0.4 },
+            { lng: -73.985, lat: 40.728, weight: 0.7 }
+        ]
+    };
+    
+    // Datos actuales (inicialmente los por defecto)
+    let simulationData = { ...defaultSimulationData };
+    
+    // Convertir datos a GeoJSON
+    const createDronePathGeoJSON = (pathPoints) => {
+        const coordinates = pathPoints.map(point => [point[0], point[1], point[2] || 0]);
+        return {
+            type: 'FeatureCollection',
+            features: [{
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                }
+            }]
+        };
+    };
+    
+    const createHeatmapGeoJSON = (points) => {
+        return {
+            type: 'FeatureCollection',
+            features: points.map(point => ({
+                type: 'Feature',
+                properties: {
+                    weight: point.weight || 0.5
+                },
+                geometry: {
+                    type: 'Point',
+                    coordinates: [point.lng || point[0], point.lat || point[1]]
+                }
+            }))
+        };
+    };
+    
+    // Procesar archivo de ruta
+    const processRouteFile = (file) => {
+        const fileName = file.name.toLowerCase();
+        const reader = new FileReader();
+        const routeInfo = document.getElementById('route-info');
+        
+        reader.onload = (e) => {
+            try {
+                let dronePathPoints = [];
+                const fileContent = e.target.result;
+                
+                // Procesar según el tipo de archivo
+                if (fileName.endsWith('.gpx')) {
+                    // Convertir GPX a GeoJSON
+                    const gpxDom = (new DOMParser()).parseFromString(fileContent, 'text/xml');
+                    const geoJson = toGeoJSON.gpx(gpxDom);
+                    
+                    if (geoJson.features && geoJson.features.length > 0) {
+                        // Buscar trazas o rutas en el GPX
+                        const feature = geoJson.features.find(f => 
+                            f.geometry.type === 'LineString' || f.geometry.type === 'MultiLineString');
+                        
+                        if (feature) {
+                            let coordinates = [];
+                            if (feature.geometry.type === 'LineString') {
+                                coordinates = feature.geometry.coordinates;
+                            } else if (feature.geometry.type === 'MultiLineString') {
+                                // Unir todos los segmentos
+                                coordinates = feature.geometry.coordinates.flat();
+                            }
+                            
+                            // Convertir al formato de puntos de ruta
+                            dronePathPoints = coordinates.map(coord => {
+                                return [coord[0], coord[1], coord[2] || 100]; // lng, lat, alt
+                            });
+                        }
+                    }
+                } else if (fileName.endsWith('.kml')) {
+                    // Convertir KML a GeoJSON
+                    const kmlDom = (new DOMParser()).parseFromString(fileContent, 'text/xml');
+                    const geoJson = toGeoJSON.kml(kmlDom);
+                    
+                    if (geoJson.features && geoJson.features.length > 0) {
+                        // Buscar LineString o LineString en el KML
+                        const feature = geoJson.features.find(f => 
+                            f.geometry.type === 'LineString' || f.geometry.type === 'MultiLineString');
+                        
+                        if (feature) {
+                            let coordinates = [];
+                            if (feature.geometry.type === 'LineString') {
+                                coordinates = feature.geometry.coordinates;
+                            } else if (feature.geometry.type === 'MultiLineString') {
+                                coordinates = feature.geometry.coordinates.flat();
+                            }
+                            
+                            dronePathPoints = coordinates.map(coord => {
+                                return [coord[0], coord[1], coord[2] || 100];
+                            });
+                        }
+                    }
+                } else if (fileName.endsWith('.json') || fileName.endsWith('.geojson')) {
+                    // Procesar archivo GeoJSON
+                    const geoJson = JSON.parse(fileContent);
+                    
+                    if (geoJson.features && geoJson.features.length > 0) {
+                        // Buscar LineString
+                        const feature = geoJson.features.find(f => 
+                            f.geometry.type === 'LineString' || f.geometry.type === 'MultiLineString');
+                        
+                        if (feature) {
+                            let coordinates = [];
+                            if (feature.geometry.type === 'LineString') {
+                                coordinates = feature.geometry.coordinates;
+                            } else if (feature.geometry.type === 'MultiLineString') {
+                                coordinates = feature.geometry.coordinates.flat();
+                            }
+                            
+                            dronePathPoints = coordinates.map(coord => {
+                                return [coord[0], coord[1], coord[2] || 100];
+                            });
+                        }
+                    }
+                } else if (fileName.endsWith('.csv')) {
+                    // Procesar CSV con PapaParse
+                    const results = Papa.parse(fileContent, { header: true });
+                    
+                    if (results.data && results.data.length > 0) {
+                        // Buscar columnas de lat, lng, alt
+                        const firstRow = results.data[0];
+                        
+                        // Detectar nombres de columnas
+                        const lonKey = Object.keys(firstRow).find(key => 
+                            key.toLowerCase().includes('lon') || 
+                            key.toLowerCase().includes('lng') || 
+                            key.toLowerCase() === 'x');
+                            
+                        const latKey = Object.keys(firstRow).find(key => 
+                            key.toLowerCase().includes('lat') || 
+                            key.toLowerCase() === 'y');
+                            
+                        const altKey = Object.keys(firstRow).find(key => 
+                            key.toLowerCase().includes('alt') || 
+                            key.toLowerCase().includes('elev') || 
+                            key.toLowerCase() === 'z');
+                        
+                        if (lonKey && latKey) {
+                            dronePathPoints = results.data
+                                .filter(row => row[lonKey] && row[latKey]) // Filtrar filas vacías
+                                .map(row => {
+                                    return [
+                                        parseFloat(row[lonKey]), 
+                                        parseFloat(row[latKey]), 
+                                        altKey ? parseFloat(row[altKey]) || 100 : 100
+                                    ];
+                                });
+                        }
+                    }
+                }
+                
+                // Verificar si tenemos suficientes puntos
+                if (dronePathPoints.length > 1) {
+                    // Actualizar datos de simulación
+                    simulationData.dronePathPoints = dronePathPoints;
+                    
+                    // Generar datos de heatmap basados en la ruta
+                    simulationData.heatmapPoints = dronePathPoints
+                        .filter((_, i) => i % 3 === 0) // Tomar cada tercer punto
+                        .map(point => ({
+                            lng: point[0],
+                            lat: point[1],
+                            weight: Math.random() * 0.5 + 0.3 // Peso aleatorio entre 0.3 y 0.8
+                        }));
+                    
+                    routeInfo.textContent = `Loaded ${dronePathPoints.length} points from ${file.name}`;
+                    routeInfo.className = 'route-info success';
+                    
+                    // Centrar mapa en la ruta
+                    if (window.map) {
+                        const bounds = new mapboxgl.LngLatBounds();
+                        dronePathPoints.forEach(point => {
+                            bounds.extend([point[0], point[1]]);
+                        });
+                        window.map.fitBounds(bounds, { padding: 50 });
+                    }
+                    
+                    logAnalysis(`Route loaded: ${dronePathPoints.length} waypoints from ${file.name}`);
+                } else {
+                    throw new Error('No valid route data found');
+                }
+            } catch (error) {
+                console.error('Error processing file:', error);
+                routeInfo.textContent = `Error: Could not process ${file.name}`;
+                routeInfo.className = 'route-info error';
+                simulationData = { ...defaultSimulationData }; // Volver a los datos por defecto
+                logAnalysis(`Error loading route file: ${error.message}`);
+            }
+        };
+        
+        // Leer el archivo
+        if (fileName.endsWith('.gpx') || fileName.endsWith('.kml') || fileName.endsWith('.csv')) {
+            reader.readAsText(file);
+        } else if (fileName.endsWith('.json') || fileName.endsWith('.geojson')) {
+            reader.readAsText(file);
+        } else {
+            routeInfo.textContent = 'Error: Unsupported file format';
+            routeInfo.className = 'route-info error';
+            logAnalysis('Error: Unsupported file format');
+        }
+    };
+    
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicializar mapa 3D
+        const map = DroneMapbox.initMap3D(
+            'map-3d',
+            [-73.990, 40.7168], // Centro del mapa (coordenadas simuladas)
+            12
+        );
+        
+        // Guardar referencia global al mapa
+        window.map = map;
+        
+        // Referencias para control de UI
+        const droneLatElement = document.getElementById('drone-lat');
+        const droneLngElement = document.getElementById('drone-lng');
+        const droneAltElement = document.getElementById('drone-alt');
+        const droneSpeedElement = document.getElementById('drone-speed');
+        const analysisOutputElement = document.getElementById('analysis-output');
+        const routeFileInput = document.getElementById('route-file');
+        
+        // Configurar carga de archivo
+        routeFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                processRouteFile(file);
+            }
+        });
+        
+        // Variables de estado
+        let drawControl = null;
+        let isPathVisible = false;
+        let isHeatmapVisible = false;
+        let isViewshedVisible = false;
+        let isGeofenceActive = false;
+        let streamInterval = null;
+        let currentPointIndex = 0;
+        
+        // Configurar estilos de mapa
+        document.getElementById('style-default').addEventListener('click', () => {
+            DroneMapbox.changeMapStyle(map, 'default');
+        });
+        
+        document.getElementById('style-satellite').addEventListener('click', () => {
+            DroneMapbox.changeMapStyle(map, 'satellite');
+        });
+        
+        document.getElementById('style-night').addEventListener('click', () => {
+            DroneMapbox.changeMapStyle(map, 'night');
+        });
+        
+        document.getElementById('style-terrain').addEventListener('click', () => {
+            DroneMapbox.changeMapStyle(map, 'terrain');
+        });
+        
+        // Configurar controles de dron
+        document.getElementById('toggle-path').addEventListener('click', () => {
+            // Crear GeoJSON de datos actuales
+            const dronePathGeoJSON = createDronePathGeoJSON(simulationData.dronePathPoints);
+            
+            if (!isPathVisible) {
+                DroneMapbox.addDronePath(map, dronePathGeoJSON, 'drone-path', false);
+                isPathVisible = true;
+                logAnalysis('Drone path visualization enabled');
+            } else {
+                if (map.getLayer('drone-path')) map.removeLayer('drone-path');
+                if (map.getSource('drone-path-source')) map.removeSource('drone-path-source');
+                isPathVisible = false;
+                logAnalysis('Drone path visualization disabled');
+            }
+        });
+        
+        document.getElementById('toggle-heatmap').addEventListener('click', () => {
+            // Crear GeoJSON de datos actuales
+            const heatmapGeoJSON = createHeatmapGeoJSON(simulationData.heatmapPoints);
+            
+            if (!isHeatmapVisible) {
+                DroneMapbox.addHeatmap(map, heatmapGeoJSON);
+                isHeatmapVisible = true;
+                logAnalysis('Activity heatmap enabled - Analyzing movement patterns');
+            } else {
+                if (map.getLayer('activity-heat')) map.removeLayer('activity-heat');
+                if (map.getSource('activity-heat-source')) map.removeSource('activity-heat-source');
+                isHeatmapVisible = false;
+                logAnalysis('Activity heatmap disabled');
+            }
+        });
+        
+        document.getElementById('toggle-viewshed').addEventListener('click', () => {
+            if (!isViewshedVisible) {
+                // Usar un punto central de la ruta actual
+                const centerIndex = Math.floor(simulationData.dronePathPoints.length / 2);
+                const centerPoint = simulationData.dronePathPoints[centerIndex];
+                DroneMapbox.addViewshed(map, [centerPoint[0], centerPoint[1]], 800);
+                isViewshedVisible = true;
+                logAnalysis('Visibility analysis enabled - Range: 800m');
+            } else {
+                if (map.getLayer('viewshed')) map.removeLayer('viewshed');
+                if (map.getSource('viewshed-source')) map.removeSource('viewshed-source');
+                isViewshedVisible = false;
+                logAnalysis('Visibility analysis disabled');
+            }
+        });
+        
+        document.getElementById('toggle-geofence').addEventListener('click', () => {
+            if (!isGeofenceActive) {
+                drawControl = DroneMapbox.setupGeofencing(map, 'map-3d');
+                isGeofenceActive = true;
+                logAnalysis('Geofence tool activated - Draw a polygon to create restricted areas');
+            } else {
+                map.removeControl(drawControl);
+                const geofenceInfo = document.getElementById('geofence-info');
+                if (geofenceInfo) geofenceInfo.remove();
+                isGeofenceActive = false;
+                logAnalysis('Geofence tool deactivated');
+            }
+        });
+        
+        // Simulación de stream
+        document.getElementById('start-stream').addEventListener('click', () => {
+            // Crear GeoJSON de datos actuales
+            const dronePathGeoJSON = createDronePathGeoJSON(simulationData.dronePathPoints);
+            
+            if (streamInterval) clearInterval(streamInterval);
+            
+            document.getElementById('start-stream').disabled = true;
+            document.getElementById('stop-stream').disabled = false;
+            
+            currentPointIndex = 0;
+            
+            // Primero limpiar el mapa de la ruta anterior si existe
+            if (isPathVisible) {
+                if (map.getLayer('drone-path')) map.removeLayer('drone-path');
+                if (map.getSource('drone-path-source')) map.removeSource('drone-path-source');
+                if (map.getLayer('drone-path-drone')) map.removeLayer('drone-path-drone');
+                if (map.getSource('drone-path-drone-source')) map.removeSource('drone-path-drone-source');
+                if (map.getLayer('route-segment-layer')) map.removeLayer('route-segment-layer');
+                if (map.getSource('route-segment-source')) map.removeSource('route-segment-source');
+                if (map.getLayer('drone-marker-point')) map.removeLayer('drone-marker-point');
+                if (map.getLayer('drone-marker-symbol')) map.removeLayer('drone-marker-symbol');
+                if (map.getSource('drone-marker-source')) map.removeSource('drone-marker-source');
+            }
+            
+            // Mostrar la ruta completa como línea punteada (sin animación)
+            if (!map.getSource('drone-path-source')) {
+                map.addSource('drone-path-source', {
+                    'type': 'geojson',
+                    'data': dronePathGeoJSON
+                });
+            } else {
+                map.getSource('drone-path-source').setData(dronePathGeoJSON);
+            }
+            
+            if (!map.getLayer('drone-path')) {
+                map.addLayer({
+                    'id': 'drone-path',
+                    'type': 'line',
+                    'source': 'drone-path-source',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#00B8D4',
+                        'line-width': 2,
+                        'line-dasharray': [2, 2], // Línea punteada para la ruta completa
+                        'line-opacity': 0.7
+                    }
+                });
+            }
+            
+            // Crear un marcador para el dron
+            const dronePoint = {
+                'type': 'FeatureCollection',
+                'features': [{
+                    'type': 'Feature',
+                    'properties': {},
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': simulationData.dronePathPoints[0]
+                    }
+                }]
+            };
+            
+            // Añadir fuente para el dron
+            if (!map.getSource('drone-marker-source')) {
+                map.addSource('drone-marker-source', {
+                    'type': 'geojson',
+                    'data': dronePoint
+                });
+            } else {
+                map.getSource('drone-marker-source').setData(dronePoint);
+            }
+            
+            // Añadir capa para el dron (con un punto y un símbolo)
+            if (!map.getLayer('drone-marker-point')) {
+                map.addLayer({
+                    'id': 'drone-marker-point',
+                    'type': 'circle',
+                    'source': 'drone-marker-source',
+                    'paint': {
+                        'circle-radius': 6,
+                        'circle-color': '#00E5FF',
+                        'circle-stroke-width': 2,
+                        'circle-stroke-color': '#FFFFFF',
+                        'circle-opacity': 0.8
+                    }
+                });
+            }
+            
+            if (!map.getLayer('drone-marker-symbol')) {
+                map.addLayer({
+                    'id': 'drone-marker-symbol',
+                    'type': 'symbol',
+                    'source': 'drone-marker-source',
+                    'layout': {
+                        'icon-image': 'airport',
+                        'icon-size': 0.7,
+                        'icon-allow-overlap': true,
+                        'icon-rotate': ['get', 'bearing']
+                    }
+                });
+            }
+            
+            isPathVisible = true;
+            
+            logAnalysis('Stream initialized. Receiving telemetry data...');
+            
+            // Crear el segmento de ruta vacío
+            const routeSegment = {
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: [simulationData.dronePathPoints[0]]
+                    }
+                }]
+            };
+            
+            // Añadir capa para la ruta recorrida
+            if (!map.getSource('route-segment-source')) {
+                map.addSource('route-segment-source', {
+                    type: 'geojson',
+                    data: routeSegment
+                });
+                
+                map.addLayer({
+                    'id': 'route-segment-layer',
+                    'type': 'line',
+                    'source': 'route-segment-source',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#FF9800',
+                        'line-width': 3,
+                        'line-opacity': 1
+                    }
+                }, 'drone-marker-point'); // Dibujar debajo del dron
+            } else {
+                map.getSource('route-segment-source').setData(routeSegment);
+            }
+            
+            // Variables para animación
+            let animationStartTime = null;
+            let animationStep = 0;
+            const animationDuration = 1800; // Duración de la animación entre puntos (ms)
+            
+            // Cancelar animación anterior si existe
+            if (window.animationFrameId) {
+                cancelAnimationFrame(window.animationFrameId);
+            }
+            
+            // Función para interpolar entre dos puntos
+            function interpolatePoint(pointA, pointB, fraction) {
+                return [
+                    pointA[0] + (pointB[0] - pointA[0]) * fraction,
+                    pointA[1] + (pointB[1] - pointA[1]) * fraction,
+                    pointA[2] + (pointB[2] - pointA[2]) * fraction
+                ];
+            }
+            
+            // Función de animación
+            function animateDrone(timestamp) {
+                if (!animationStartTime) animationStartTime = timestamp;
+                const elapsed = timestamp - animationStartTime;
+                
+                // Si hemos llegado al final de la animación actual
+                if (elapsed >= animationDuration) {
+                    currentPointIndex++;
+                    animationStartTime = timestamp;
+                    animationStep++;
+                    
+                    // Si hemos llegado al final de la ruta
+                    if (currentPointIndex >= simulationData.dronePathPoints.length - 1) {
+                        document.getElementById('start-stream').disabled = false;
+                        document.getElementById('stop-stream').disabled = true;
+                        logAnalysis('End of flight path reached. Stream terminated.');
+                        return;
+                    }
+                    
+                    // Log de análisis
+                    if (currentPointIndex % 3 === 0) {
+                        const analysisMsgs = [
+                            'Terrain analysis: Urban environment detected',
+                            'Image recognition: High-density building structures',
+                            'Structure identification: Possible transport hub',
+                            'Pattern detected: Regular grid pattern streets',
+                            'Environmental analysis: Low vegetation coverage',
+                            'Traffic analysis: High vehicle density detected'
+                        ];
+                        
+                        logAnalysis(analysisMsgs[Math.floor(Math.random() * analysisMsgs.length)]);
+                    }
+                }
+                
+                // Calcular la fracción de progreso
+                const fraction = Math.min(elapsed / animationDuration, 1);
+                
+                // Obtener los puntos actuales
+                const currentPos = simulationData.dronePathPoints[currentPointIndex];
+                const nextPos = simulationData.dronePathPoints[Math.min(currentPointIndex + 1, simulationData.dronePathPoints.length - 1)];
+                
+                // Interpolar la posición
+                const interpolatedPos = interpolatePoint(currentPos, nextPos, fraction);
+                
+                // Calcular el rumbo (dirección) del dron
+                const y = Math.sin(nextPos[0] - currentPos[0]) * Math.cos(nextPos[1]);
+                const x = Math.cos(currentPos[1]) * Math.sin(nextPos[1]) -
+                        Math.sin(currentPos[1]) * Math.cos(nextPos[1]) * Math.cos(nextPos[0] - currentPos[0]);
+                const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+                
+                // Actualizar UI con datos del dron
+                droneLatElement.textContent = interpolatedPos[1].toFixed(6);
+                droneLngElement.textContent = interpolatedPos[0].toFixed(6);
+                droneAltElement.textContent = Math.round(interpolatedPos[2]) + ' m';
+                
+                // Calcular velocidad simulada
+                const distance = turf.distance(
+                    turf.point([currentPos[0], currentPos[1]]), 
+                    turf.point([nextPos[0], nextPos[1]]),
+                    {units: 'kilometers'}
+                );
+                const speed = Math.round((distance / (animationDuration/1000)) * 3600); // km/h
+                droneSpeedElement.textContent = speed + ' km/h';
+                
+                // Actualizar la posición del dron en el mapa
+                map.getSource('drone-marker-source').setData({
+                    type: 'FeatureCollection',
+                    features: [{
+                        type: 'Feature',
+                        properties: {
+                            bearing: bearing
+                        },
+                        geometry: {
+                            type: 'Point',
+                            coordinates: interpolatedPos
+                        }
+                    }]
+                });
+                
+                // Actualizar la ruta recorrida
+                const currentSegment = simulationData.dronePathPoints.slice(0, currentPointIndex + 1);
+                currentSegment.push(interpolatedPos);
+                
+                map.getSource('route-segment-source').setData({
+                    type: 'FeatureCollection',
+                    features: [{
+                        type: 'Feature',
+                        properties: {},
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: currentSegment
+                        }
+                    }]
+                });
+                
+                // Centrar el mapa en la posición actual del dron (suavemente)
+                map.easeTo({
+                    center: [interpolatedPos[0], interpolatedPos[1]],
+                    duration: 200
+                });
+                
+                // Continuar la animación
+                window.animationFrameId = requestAnimationFrame(animateDrone);
+            }
+            
+            // Iniciar la animación
+            window.animationFrameId = requestAnimationFrame(animateDrone);
+        });
+        
+        document.getElementById('stop-stream').addEventListener('click', () => {
+            if (window.animationFrameId) {
+                cancelAnimationFrame(window.animationFrameId);
+                window.animationFrameId = null;
+            }
+            
+            document.getElementById('start-stream').disabled = false;
+            document.getElementById('stop-stream').disabled = true;
+            
+            logAnalysis('Stream manually terminated');
+        });
+        
+        // Función para añadir entradas al log de análisis
+        function logAnalysis(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            
+            analysisOutputElement.appendChild(logEntry);
+            analysisOutputElement.scrollTop = analysisOutputElement.scrollHeight;
+        }
+        
+        // Log inicial
+        logAnalysis('System initialized. Drone telemetry available.');
+        logAnalysis('Upload a route file or use default simulation data.');
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,455 @@
+/* Cyber Intelligence Theme - Modern High-Tech Interface */
+:root {
+    --cyber-dark: #0a0e17;
+    --cyber-darker: #05080f;
+    --cyber-blue: #0a4b91;
+    --cyber-blue-light: #1a6ed8;
+    --cyber-teal: #00b8d4;
+    --cyber-accent: #00e5ff;
+    --cyber-green: #00c853;
+    --cyber-red: #ff5252;
+    --cyber-yellow: #ffab00;
+    --text-color: #e0f7fa;
+    --text-secondary: #b0bec5;
+    --grid-color: rgba(0, 229, 255, 0.1);
+    --border-glow: 0 0 5px rgba(0, 229, 255, 0.7);
+}
+
+/* Base styling */
+body {
+    background-color: var(--cyber-dark);
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-color);
+    font-family: 'Roboto Mono', 'Consolas', monospace;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, var(--cyber-dark) 80%);
+    z-index: -1;
+}
+
+.military-bg {
+    background-color: transparent;
+}
+
+/* Header styling */
+header {
+    background-color: var(--cyber-darker);
+    border-bottom: 1px solid var(--cyber-blue);
+    box-shadow: var(--border-glow);
+    z-index: 10;
+}
+
+.military-title {
+    color: var(--cyber-accent);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 5px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+h5.sidebar-heading {
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--cyber-blue);
+    padding-bottom: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.military-hr {
+    border-color: var(--cyber-blue);
+    opacity: 0.5;
+    margin: 0.5rem 0;
+    box-shadow: var(--border-glow);
+}
+
+/* Sidebar */
+.sidebar-military {
+    background-color: var(--cyber-darker);
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    border-right: 1px solid var(--cyber-blue);
+    box-shadow: var(--border-glow);
+    padding-top: 15px;
+}
+
+/* Info boxes */
+.info-box {
+    background-color: rgba(10, 75, 145, 0.2);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 12px;
+    box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.info-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background-color: var(--cyber-accent);
+    animation: scanning 4s linear infinite;
+}
+
+@keyframes scanning {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Status indicators */
+.status-green {
+    color: var(--cyber-green);
+    text-shadow: 0 0 5px rgba(0, 200, 83, 0.7);
+}
+
+.status-red {
+    color: var(--cyber-red);
+    text-shadow: 0 0 5px rgba(255, 82, 82, 0.7);
+}
+
+.status-yellow {
+    color: var(--cyber-yellow);
+    text-shadow: 0 0 5px rgba(255, 171, 0, 0.7);
+}
+
+/* Timestamp */
+.timestamp {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--cyber-teal);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buttons */
+.btn-military {
+    background-color: rgba(10, 75, 145, 0.3);
+    color: var(--cyber-accent);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 2px;
+    font-family: 'Roboto Mono', monospace;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-military::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+    transition: all 0.5s ease;
+    z-index: -1;
+}
+
+.btn-military:hover::before {
+    left: 100%;
+}
+
+.btn-military:hover, .btn-military:focus {
+    background-color: rgba(10, 75, 145, 0.5);
+    border: 1px solid var(--cyber-accent);
+    color: var(--text-color);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+/* Form controls */
+.form-control, .form-select {
+    background-color: rgba(10, 75, 145, 0.2);
+    color: var(--text-color);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 2px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(10, 75, 145, 0.4);
+    color: var(--text-color);
+    border-color: var(--cyber-accent);
+    box-shadow: 0 0 0 0.25rem rgba(0, 229, 255, 0.25);
+}
+
+/* Maps container */
+.map-container {
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: rgba(10, 75, 145, 0.2);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    position: relative;
+}
+
+.map-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 229, 255, 0.03) 10px,
+        rgba(0, 229, 255, 0.03) 20px
+    );
+    pointer-events: none;
+}
+
+.map-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Chat interface */
+.chat-container {
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    background-color: rgba(10, 14, 23, 0.7);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+.user-message {
+    background-color: rgba(10, 75, 145, 0.3);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    text-align: right;
+    max-width: 75%;
+    margin-left: auto;
+    border-right: 2px solid var(--cyber-teal);
+    position: relative;
+}
+
+.assistant-message {
+    background-color: rgba(0, 184, 212, 0.1);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    border-left: 2px solid var(--cyber-accent);
+    line-height: 1.6;
+    max-width: 75%;
+    position: relative;
+}
+
+/* Card styling */
+.card-military {
+    background-color: rgba(10, 75, 145, 0.2);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-military::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 229, 255, 0.03) 10px,
+        rgba(0, 229, 255, 0.03) 20px
+    );
+    pointer-events: none;
+}
+
+.card-military .card-header {
+    background-color: rgba(5, 8, 15, 0.8);
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--cyber-blue);
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.card-military .card-body {
+    color: var(--text-color);
+}
+
+/* Tables */
+.table-military {
+    color: var(--text-color);
+    background-color: transparent;
+    border-color: var(--cyber-blue);
+}
+
+.table-military thead {
+    background-color: rgba(5, 8, 15, 0.8);
+    color: var(--cyber-teal);
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+.table-military tbody tr {
+    background-color: rgba(10, 75, 145, 0.1);
+    transition: all 0.3s ease;
+}
+
+.table-military tbody tr:hover {
+    background-color: rgba(10, 75, 145, 0.3);
+}
+
+/* Coordinates display */
+.coordinates {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--cyber-teal);
+    padding: 8px;
+    background-color: rgba(5, 8, 15, 0.8);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    display: inline-block;
+    box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.1);
+}
+
+/* Image Analysis Section */
+.analysis-section {
+    margin-bottom: 2rem;
+}
+
+.analysis-section h2 {
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--cyber-blue);
+    padding-bottom: 8px;
+    margin-bottom: 1.2rem;
+    letter-spacing: 1px;
+}
+
+/* File upload */
+.custom-file-upload {
+    display: block;
+    padding: 1.2rem;
+    text-align: center;
+    background-color: rgba(10, 75, 145, 0.2);
+    border: 2px dashed var(--cyber-blue);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-file-upload:hover {
+    background-color: rgba(10, 75, 145, 0.4);
+    border-color: var(--cyber-accent);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+/* Additional Cyber Elements */
+
+/* Terminal text */
+.terminal-text {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--cyber-green);
+    background-color: rgba(5, 8, 15, 0.8);
+    padding: 15px;
+    border-radius: 3px;
+    border-left: 3px solid var(--cyber-green);
+    line-height: 1.6;
+    position: relative;
+    overflow: hidden;
+}
+
+.terminal-text::before {
+    content: "> ";
+    color: var(--cyber-green);
+}
+
+/* Digital counter */
+.digital-counter {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cyber-accent);
+    background-color: rgba(5, 8, 15, 0.8);
+    padding: 5px 10px;
+    border-radius: 3px;
+    letter-spacing: 2px;
+    display: inline-block;
+    border: 1px solid var(--cyber-blue);
+    box-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+}
+
+/* Alert box */
+.cyber-alert {
+    background-color: rgba(255, 82, 82, 0.1);
+    border: 1px solid var(--cyber-red);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 82, 82, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
+}
+
+/* Overriding Bootstrap defaults */
+.bg-dark {
+    background-color: var(--cyber-darker) !important;
+}
+
+.bg-primary {
+    background-color: var(--cyber-blue) !important;
+}
+
+/* Add Orbitron font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap'); 

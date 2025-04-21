@@ -1,21 +1,21 @@
-Summary,Issue Type,Status,Assignee,Start Date,Due Date,Description,Priority
-"DRONE-001: Configuración inicial del proyecto",Task,Done,Developer,2023-05-01,2023-05-03,"Configurar la estructura básica del proyecto, entorno virtual, dependencias y repositorio Git.",Medium
-"DRONE-002: Diseño de la arquitectura modular",Task,Done,Developer,2023-05-03,2023-05-06,"Diseñar la arquitectura modular del sistema, definiendo los componentes principales (frontend, backend, models, utils).",High
-"DRONE-003: Implementación de la clase VisionLLM",Task,Done,Developer,2023-05-07,2023-05-11,"Desarrollar la clase para integración con modelos de visión para análisis de imágenes.",High
-"DRONE-004: Desarrollo de extractor de metadatos",Task,Done,Developer,2023-05-08,2023-05-12,"Implementar el extractor de metadatos para obtener información EXIF de imágenes.",Medium
-"DRONE-005: Implementación de GeoService",Task,Done,Developer,2023-05-15,2023-05-19,"Implementar el servicio de geolocalización para determinar ubicaciones en mapas.",High
-"DRONE-006: Desarrollo de MapboxService",Task,Done,Developer,2023-05-18,2023-05-22,"Desarrollar el servicio para integración con Mapbox para visualización de mapas.",Medium
-"DRONE-007: Implementación de ObjectDetector",Task,Done,Developer,2023-05-20,2023-05-24,"Desarrollar el detector de objetos con YOLOv8 para identificación de elementos en imágenes.",Medium
-"DRONE-008: Implementación de VideoProcessor",Task,Done,Developer,2023-05-22,2023-05-26,"Desarrollar el procesador de video para manejo de streams de drones.",Medium
-"DRONE-009: Desarrollo de API principal",Task,Done,Developer,2023-05-25,2023-05-30,"Implementar la API REST con FastAPI para endpoints del sistema.",Medium
-"DRONE-010: Configuración del sistema de cache",Task,Done,Developer,2023-05-28,2023-06-01,"Implementar el sistema de cache para resultados de análisis y mapas.",Medium
-"DRONE-011: Implementación de frontend principal",Task,Done,Developer,2023-06-01,2023-06-05,"Desarrollar la interfaz principal de Streamlit con diseño militar.",High
-"DRONE-012: Desarrollo de componentes de mapa",Task,Done,Developer,2023-06-03,2023-06-06,"Implementar los componentes interactivos de mapas.",Medium
-"DRONE-013: Implementación del chat LLM",Task,Done,Developer,2023-06-05,2023-06-09,"Implementar el sistema de chat con LLM para consultas sobre imágenes.",Medium
-"DRONE-014: Pruebas de integración",Test,Done,Developer,2023-06-08,2023-06-12,"Realizar pruebas de integración de todos los componentes.",High
-"DRONE-015: Dockerización de la aplicación",Task,Done,Developer,2023-06-10,2023-06-14,"Configurar Docker y docker-compose para el despliegue.",Medium
-"DRONE-016: Implementación del modo producción",Task,In Progress,Developer,2023-06-15,2023-06-18,"Configurar el modo de producción con docker-compose.prod.yml.",Medium
-"DRONE-017: Documentación técnica",Task,In Progress,Developer,2023-06-17,2023-06-21,"Preparar documentación técnica del proyecto y diagramas.",Medium
-"DRONE-018: Creación de guía de usuario",Task,To Do,Developer,2023-06-20,2023-06-24,"Desarrollar una guía de usuario completa con ejemplos.",Medium
-"DRONE-019: Mejora estilo militar UI",Task,Done,Developer,2023-06-05,2023-06-07,"Optimización del estilo militar en la interfaz: mejora de colores, fuentes monoespaciadas, y bordes estilo táctico.",Medium
-"DRONE-020: Mejora de extracción de metadatos EXIF",Task,To Do,Developer,2024-06-15,2024-06-22,"Refactorización y mejora del sistema de extracción de metadatos EXIF para optimizar la recuperación de información geoespacial desde imágenes de drones.",High 
+Summary,Issue Type,Status,Assignee,Start Date,Due Date,Description,Priority,Cambios Detallados
+"DRONE-001: Configuración inicial del proyecto",Task,Done,Developer,2023-05-01,2023-05-03,"Configurar la estructura básica del proyecto, entorno virtual, dependencias y repositorio Git.",Medium,""
+"DRONE-002: Diseño de la arquitectura modular",Task,Done,Developer,2023-05-03,2023-05-06,"Diseñar la arquitectura modular del sistema, definiendo los componentes principales (frontend, backend, models, utils).",High,""
+"DRONE-003: Implementación de la clase VisionLLM",Task,Done,Developer,2023-05-07,2023-05-11,"Desarrollar la clase para integración con modelos de visión para análisis de imágenes.",High,""
+"DRONE-004: Desarrollo de extractor de metadatos",Task,Done,Developer,2023-05-08,2023-05-12,"Implementar el extractor de metadatos para obtener información EXIF de imágenes.",Medium,""
+"DRONE-005: Implementación de GeoService",Task,Done,Developer,2023-05-15,2023-05-19,"Implementar el servicio de geolocalización para determinar ubicaciones en mapas.",High,""
+"DRONE-006: Desarrollo de MapboxService",Task,Done,Developer,2023-05-18,2023-05-22,"Desarrollar el servicio para integración con Mapbox para visualización de mapas.",Medium,""
+"DRONE-007: Implementación de ObjectDetector",Task,Done,Developer,2023-05-20,2023-05-24,"Desarrollar el detector de objetos con YOLOv8 para identificación de elementos en imágenes.",Medium,""
+"DRONE-008: Implementación de VideoProcessor",Task,Done,Developer,2023-05-22,2023-05-26,"Desarrollar el procesador de video para manejo de streams de drones.",Medium,""
+"DRONE-009: Desarrollo de API principal",Task,Done,Developer,2023-05-25,2023-05-30,"Implementar la API REST con FastAPI para endpoints del sistema.",Medium,""
+"DRONE-010: Configuración del sistema de cache",Task,Done,Developer,2023-05-28,2023-06-01,"Implementar el sistema de cache para resultados de análisis y mapas.",Medium,""
+"DRONE-011: Implementación de frontend principal",Task,Done,Developer,2023-06-01,2023-06-05,"Desarrollar la interfaz principal de Streamlit con diseño militar.",High,""
+"DRONE-012: Desarrollo de componentes de mapa",Task,Done,Developer,2023-06-03,2023-06-06,"Implementar los componentes interactivos de mapas.",Medium,""
+"DRONE-013: Implementación del chat LLM",Task,Done,Developer,2023-06-05,2023-06-09,"Implementar el sistema de chat con LLM para consultas sobre imágenes.",Medium,""
+"DRONE-014: Pruebas de integración",Test,Done,Developer,2023-06-08,2023-06-12,"Realizar pruebas de integración de todos los componentes.",High,""
+"DRONE-015: Dockerización de la aplicación",Task,Done,Developer,2023-06-10,2023-06-14,"Configurar Docker y docker-compose para el despliegue.",Medium,""
+"DRONE-016: Implementación del modo producción",Task,In Progress,Developer,2023-06-15,2023-06-18,"Configurar el modo de producción con docker-compose.prod.yml.",Medium,""
+"DRONE-017: Documentación técnica",Task,In Progress,Developer,2023-06-17,2023-06-21,"Preparar documentación técnica del proyecto y diagramas.",Medium,""
+"DRONE-018: Creación de guía de usuario",Task,To Do,Developer,2023-06-20,2023-06-24,"Desarrollar una guía de usuario completa con ejemplos.",Medium,""
+"DRONE-019: Mejora estilo militar UI",Task,Done,Developer,2023-06-05,2023-06-07,"Optimización del estilo militar en la interfaz: mejora de colores, fuentes monoespaciadas, y bordes estilo táctico.",Medium,""
+"DRONE-020: Mejora de extracción de metadatos EXIF",Task,In Progress,Developer,2023-06-15,2023-07-02,"Refactorización y mejora del sistema de extracción de metadatos EXIF para optimizar la recuperación de información geoespacial desde imágenes de drones.",High,"1. Cambiado el estado de Por hacer a En progreso. 2. Corregido fechas de 2024 a 2023. 3. Actualizado Epic relacionado a formato correcto. 4. Añadido secciones: Cambios realizados hasta el momento, Cambios pendientes, Pruebas realizadas, Próximos pasos. 5. Actualizado timeline_view.md con semanas 9 y 10. 6. Añadido Sprint 5 en jira_timeline.md. 7. Actualizado progreso de épicas (EPIC-002: 95%, EPIC-007: 70%, EPIC-008: 30%). 8. Modificado distribución de esfuerzo (Visión y Análisis: 35%). 9. Añadido a mermaid_gantt.md con 17 días de duración. 10. Creado fase de Optimización en mermaid_timeline.md. 11. Ajustado fechas finales del proyecto a 09/07/2023." 

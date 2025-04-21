@@ -20,13 +20,6 @@ wait_for_backend() {
     return 1
 }
 
-# Función para verificar la conexión API usando Python
-test_api_connection() {
-    echo "Running API connection test using Python..."
-    cd /app && python src/frontend/api_test.py
-    return $?
-}
-
 # Debug: Mostrar variables de entorno
 echo "DEBUG: Current environment variables:"
 echo "PYTHONPATH=$PYTHONPATH"
@@ -45,40 +38,45 @@ case "$1" in
         echo "Starting backend server..."
         cd /app && python src/main.py
         ;;
-    frontend)
-        echo "Starting frontend server..."
+    django_frontend)
+        echo "Starting Django frontend server..."
         
         # Comprobar si necesitamos esperar al backend
         if [ "$WAIT_FOR_BACKEND" = "true" ] && [ -n "$API_URL" ]; then
             echo "Wait for backend is enabled. API_URL=$API_URL"
             wait_for_backend || echo "WARNING: Proceeding without confirmed backend connection!"
-            
-            # Verificar la conexión API con Python
-            if test_api_connection; then
-                echo "API connection test successful."
-            else
-                echo "WARNING: API connection test failed, but continuing anyway..."
-            fi
         else
             echo "No wait for backend requested or API_URL not set."
         fi
         
-        # Asegurar que Streamlit se ejecute correctamente en Docker
-        cd /app && streamlit run src/frontend/app.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false
+        # Aplicar migraciones de Django
+        cd /app/src/django_frontend
+        echo "Running Django migrations..."
+        python manage.py makemigrations
+        python manage.py migrate
+        
+        # Recopilar archivos estáticos
+        echo "Collecting static files..."
+        python manage.py collectstatic --noinput
+        
+        # Iniciar servidor Django
+        echo "Starting Django server..."
+        python manage.py runserver 0.0.0.0:8080
         ;;
     all)
-        echo "Starting both backend and frontend..."
+        echo "Starting both backend and Django frontend..."
         cd /app && python src/main.py &
         BACKEND_PID=$!
         
         echo "Backend started with PID $BACKEND_PID"
         wait_for_backend
         
-        # Verificar la conexión API con Python
-        test_api_connection || echo "WARNING: API connection test failed, but continuing anyway..."
-        
-        echo "Starting frontend..."
-        cd /app && streamlit run src/frontend/app.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false
+        echo "Starting Django frontend..."
+        cd /app/src/django_frontend
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py collectstatic --noinput
+        python manage.py runserver 0.0.0.0:8080
         ;;
     debug)
         echo "===== DEBUG MODE ====="

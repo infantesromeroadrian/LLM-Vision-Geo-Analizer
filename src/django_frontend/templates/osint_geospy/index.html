@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}DRONE OSINT GEOSPY - Command Center{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card-military mb-4">
+            <div class="card-header">
+                <h2 class="mb-0">MISSION OVERVIEW</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-3">
+                            <strong>DRONE OSINT GEOSPY</strong> is an advanced intelligence analysis platform that combines 
+                            drone reconnaissance with cutting-edge AI to extract actionable geo-intelligence.
+                        </p>
+                        <p>
+                            This system is designed to process drone imagery and provide accurate location identification, 
+                            terrain analysis, and pattern recognition. The AI-powered analysis can detect architectural features,
+                            landscape characteristics, and other geospatial markers to identify locations with high precision.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-box">
+                            <h5>SECURITY CLASSIFICATION</h5>
+                            <p class="mb-1"><strong class="text-warning">CLASSIFIED</strong></p>
+                            <p class="mb-0"><small>AUTHORIZED PERSONNEL ONLY</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card-military mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">MISSION CAPABILITIES</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent border-light d-flex align-items-center">
+                        <i class="fas fa-camera text-warning me-2"></i>
+                        <span>Image intelligence analysis</span>
+                    </li>
+                    <li class="list-group-item bg-transparent border-light d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                        <span>Precise geolocation from imagery</span>
+                    </li>
+                    <li class="list-group-item bg-transparent border-light d-flex align-items-center">
+                        <i class="fas fa-video text-warning me-2"></i>
+                        <span>Live drone feed analysis</span>
+                    </li>
+                    <li class="list-group-item bg-transparent border-light d-flex align-items-center">
+                        <i class="fas fa-search-location text-warning me-2"></i>
+                        <span>Interactive map visualization</span>
+                    </li>
+                    <li class="list-group-item bg-transparent border-light d-flex align-items-center">
+                        <i class="fas fa-brain text-warning me-2"></i>
+                        <span>AI-powered terrain interpretation</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card-military mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">QUICK ACCESS</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a href="{% url 'osint_geospy:image_analysis' %}" class="btn btn-military btn-lg">
+                        <i class="fas fa-eye me-2"></i> IMAGE ANALYSIS
+                    </a>
+                    <a href="{% url 'osint_geospy:drone_stream' %}" class="btn btn-military btn-lg">
+                        <i class="fas fa-video me-2"></i> DRONE STREAM
+                    </a>
+                    <a href="{% url 'osint_geospy:interrogation' %}" class="btn btn-military btn-lg">
+                        <i class="fas fa-search me-2"></i> INTERROGATION
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-military">
+            <div class="card-header">
+                <h3 class="mb-0">SYSTEM STATUS</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Backend API:</span>
+                            <span class="status-green">●</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Database:</span>
+                            <span class="status-green">●</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>AI Model:</span>
+                            <span class="status-green">●</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>API Version:</span>
+                            <span>v2.3.1</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Frontend:</span>
+                            <span>v1.4.0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Last Updated:</span>
+                            <span>{% now "Y-m-d" %}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="coordinates p-2 w-100 text-center">
+                            SESSION ID: {{ request.session.session_id|default:"UNKNOWN" }}<br>
+                            ACTIVE SINCE: {% now "H:i:s" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

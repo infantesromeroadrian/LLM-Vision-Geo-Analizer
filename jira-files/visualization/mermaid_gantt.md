@@ -32,4 +32,5 @@ gantt
     Modo producción (DRONE-016) :e1, 2023-06-15, 4d
     Documentación técnica (DRONE-017)     :e2, 2023-06-17, 5d
     Guía de usuario (DRONE-018)     :e3, 2023-06-20, 5d
+    Mejora extractor metadatos (DRONE-020) :active, e4, 2023-06-15, 17d
 ```

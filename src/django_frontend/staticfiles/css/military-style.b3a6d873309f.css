@@ -1,0 +1,457 @@
+/* Cyber Intelligence Theme - Modern High-Tech Interface */
+:root {
+    --cyber-dark: #050505;
+    --cyber-darker: #000000;
+    --cyber-blue: #0a2472;
+    --cyber-blue-light: #0e6ba8;
+    --cyber-teal: #00ff9f;
+    --cyber-accent: #00ffd5;
+    --cyber-green: #0cff33;
+    --cyber-red: #ff2e2e;
+    --cyber-yellow: #ffcc00;
+    --text-color: #e4f9ff;
+    --text-secondary: #59ffa0;
+    --grid-color: rgba(0, 255, 153, 0.15);
+    --border-glow: 0 0 3px rgba(0, 255, 153, 0.2);
+}
+
+/* Base styling */
+body {
+    background-color: var(--cyber-dark);
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-color);
+    font-family: 'Roboto Mono', 'Consolas', monospace;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, var(--cyber-dark) 85%);
+    z-index: -1;
+}
+
+.military-bg {
+    background-color: transparent;
+}
+
+/* Header styling */
+header {
+    background-color: var(--cyber-darker);
+    border-bottom: 1px solid var(--cyber-blue);
+    box-shadow: var(--border-glow);
+    z-index: 10;
+}
+
+.military-title {
+    color: var(--cyber-accent);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 5px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px rgba(0, 255, 213, 0.4);
+}
+
+h5.sidebar-heading {
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--cyber-blue);
+    padding-bottom: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.military-hr {
+    border-color: var(--cyber-blue);
+    opacity: 0.4;
+    margin: 0.5rem 0;
+    box-shadow: var(--border-glow);
+}
+
+/* Sidebar */
+.sidebar-military {
+    background-color: var(--cyber-darker);
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    border-right: 1px solid var(--cyber-blue);
+    box-shadow: var(--border-glow);
+    padding-top: 15px;
+}
+
+/* Info boxes */
+.info-box {
+    background-color: rgba(10, 36, 114, 0.2);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 12px;
+    box-shadow: var(--border-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.info-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background-color: var(--cyber-accent);
+    animation: scanning 4s linear infinite;
+}
+
+@keyframes scanning {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Status indicators */
+.status-green {
+    color: var(--cyber-green);
+    text-shadow: 0 0 5px rgba(12, 255, 51, 0.7);
+}
+
+.status-red {
+    color: var(--cyber-red);
+    text-shadow: 0 0 5px rgba(255, 46, 46, 0.7);
+}
+
+.status-yellow {
+    color: var(--cyber-yellow);
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.7);
+}
+
+/* Timestamp */
+.timestamp {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--cyber-teal);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buttons */
+.btn-military {
+    background-color: rgba(10, 36, 114, 0.6);
+    color: var(--cyber-teal);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 2px;
+    font-family: 'Roboto Mono', monospace;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-military::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 153, 0.2), transparent);
+    transition: all 0.5s ease;
+    z-index: -1;
+}
+
+.btn-military:hover::before {
+    left: 100%;
+}
+
+.btn-military:hover, .btn-military:focus {
+    background-color: var(--cyber-blue);
+    color: var(--cyber-accent);
+    box-shadow: 0 0 8px rgba(0, 255, 213, 0.5);
+}
+
+/* Form controls */
+.form-control, .form-select {
+    background-color: rgba(10, 36, 114, 0.15);
+    color: var(--text-color);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 2px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(10, 36, 114, 0.3);
+    color: var(--text-color);
+    border-color: var(--cyber-accent);
+    box-shadow: 0 0 0 0.25rem rgba(0, 255, 213, 0.25);
+}
+
+/* Maps container */
+.map-container {
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: rgba(10, 36, 114, 0.15);
+    box-shadow: var(--border-glow);
+    position: relative;
+}
+
+.map-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 255, 153, 0.05) 10px,
+        rgba(0, 255, 153, 0.05) 20px
+    );
+    pointer-events: none;
+}
+
+.map-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Chat interface */
+.chat-container {
+    background-color: rgba(10, 36, 114, 0.15);
+    margin-bottom: 20px;
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    padding: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: var(--border-glow);
+}
+
+.user-message {
+    background-color: rgba(10, 36, 114, 0.3);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    text-align: right;
+    max-width: 75%;
+    margin-left: auto;
+    border-right: 2px solid var(--cyber-teal);
+    position: relative;
+}
+
+.assistant-message {
+    background-color: rgba(0, 255, 159, 0.1);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    border-left: 2px solid var(--cyber-accent);
+    line-height: 1.6;
+    max-width: 75%;
+    position: relative;
+}
+
+/* Card styling */
+.card-military {
+    background-color: rgba(10, 36, 114, 0.15);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    box-shadow: var(--border-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-military::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        rgba(0, 255, 153, 0.03) 10px,
+        rgba(0, 255, 153, 0.03) 20px
+    );
+    pointer-events: none;
+}
+
+.card-military .card-header {
+    background-color: var(--cyber-darker);
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--cyber-blue);
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.card-military .card-body {
+    color: var(--text-color);
+}
+
+/* Tables */
+.table-military {
+    color: var(--text-color);
+    background-color: transparent;
+    border-color: var(--cyber-blue);
+}
+
+.table-military thead {
+    background-color: var(--cyber-darker);
+    color: var(--cyber-teal);
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 255, 159, 0.4);
+}
+
+.table-military tbody tr {
+    background-color: rgba(10, 36, 114, 0.1);
+    transition: all 0.3s ease;
+}
+
+.table-military tbody tr:hover {
+    background-color: rgba(10, 36, 114, 0.3);
+}
+
+/* Coordinates display */
+.coordinates {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--cyber-teal);
+    padding: 8px;
+    background-color: var(--cyber-darker);
+    border: 1px solid var(--cyber-blue);
+    border-radius: 3px;
+    display: inline-block;
+    box-shadow: var(--border-glow);
+    text-shadow: 0 0 5px rgba(0, 255, 159, 0.4);
+}
+
+/* Image Analysis Section */
+.analysis-section {
+    margin-bottom: 2rem;
+}
+
+.analysis-section h2 {
+    color: var(--cyber-teal);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--cyber-blue);
+    padding-bottom: 8px;
+    margin-bottom: 1.2rem;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 255, 159, 0.4);
+}
+
+/* File upload */
+.custom-file-upload {
+    display: block;
+    padding: 1.2rem;
+    text-align: center;
+    background-color: rgba(10, 36, 114, 0.15);
+    border: 2px dashed var(--cyber-blue);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-file-upload:hover {
+    background-color: rgba(10, 36, 114, 0.3);
+    border-color: var(--cyber-accent);
+    box-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+}
+
+/* Terminal text */
+.terminal-text {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--cyber-green);
+    background-color: var(--cyber-darker);
+    padding: 15px;
+    border-radius: 3px;
+    border-left: 3px solid var(--cyber-green);
+    line-height: 1.6;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 0 5px rgba(12, 255, 51, 0.4);
+}
+
+.terminal-text::before {
+    content: "> ";
+    color: var(--cyber-green);
+}
+
+/* Digital counter */
+.digital-counter {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--cyber-accent);
+    background-color: var(--cyber-darker);
+    padding: 5px 10px;
+    border-radius: 3px;
+    letter-spacing: 2px;
+    display: inline-block;
+    border: 1px solid var(--cyber-blue);
+    box-shadow: var(--border-glow);
+    text-shadow: 0 0 5px rgba(0, 255, 213, 0.6);
+}
+
+/* Alert box */
+.cyber-alert {
+    background-color: rgba(255, 46, 46, 0.1);
+    border: 1px solid var(--cyber-red);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 46, 46, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 46, 46, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 46, 46, 0); }
+}
+
+/* Overriding Bootstrap defaults */
+.bg-dark {
+    background-color: var(--cyber-darker) !important;
+}
+
+.bg-primary {
+    background-color: var(--cyber-blue) !important;
+}
+
+/* Add Orbitron font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap'); 

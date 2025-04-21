@@ -1,0 +1,328 @@
+/* Minimal Modern Intelligence Theme */
+:root {
+    --dark-bg: #121212;
+    --darker-bg: #0a0a0a;
+    --panel-bg: rgba(20, 20, 20, 0.7);
+    --border-color: #2c2c2c;
+    --accent-color: #0c84fe;
+    --accent-subtle: rgba(12, 132, 254, 0.15);
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --text-primary: #f5f5f5;
+    --text-secondary: #b0b0b0;
+    --grid-color: rgba(60, 60, 60, 0.1);
+}
+
+/* Base styling */
+body {
+    background-color: var(--dark-bg);
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 30px 30px;
+    color: var(--text-primary);
+    font-family: 'Inter', 'Roboto', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Header styling */
+header {
+    background-color: var(--darker-bg);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+.military-title {
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 5px;
+    letter-spacing: 0;
+}
+
+h5.sidebar-heading {
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.military-hr {
+    border-color: var(--border-color);
+    opacity: 0.5;
+    margin: 0.5rem 0;
+}
+
+/* Sidebar */
+.sidebar-military {
+    background-color: var(--darker-bg);
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+/* Info boxes */
+.info-box {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    position: relative;
+}
+
+/* Status indicators */
+.status-green {
+    color: var(--success-color);
+}
+
+.status-red {
+    color: var(--danger-color);
+}
+
+.status-yellow {
+    color: var(--warning-color);
+}
+
+/* Timestamp */
+.timestamp {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* Buttons */
+.btn-military {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-military:hover, .btn-military:focus {
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+}
+
+/* Form controls */
+.form-control, .form-select {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem var(--accent-subtle);
+}
+
+/* Maps container */
+.map-container {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: var(--panel-bg);
+}
+
+.map-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Chat container */
+.chat-container {
+    background-color: var(--panel-bg);
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.user-message {
+    background-color: var(--accent-subtle);
+    color: var(--text-primary);
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    text-align: right;
+    max-width: 75%;
+    margin-left: auto;
+    border-right: 2px solid var(--accent-color);
+}
+
+.assistant-message {
+    background-color: var(--panel-bg);
+    color: var(--text-primary);
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    border-left: 2px solid var(--border-color);
+    line-height: 1.6;
+    max-width: 75%;
+}
+
+/* Card styling */
+.card-military {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.card-military .card-header {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-military .card-body {
+    color: var(--text-primary);
+}
+
+/* Tables */
+.table-military {
+    color: var(--text-primary);
+    background-color: transparent;
+    border-color: var(--border-color);
+}
+
+.table-military thead {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+.table-military tbody tr {
+    background-color: var(--panel-bg);
+    transition: all 0.2s ease;
+}
+
+.table-military tbody tr:hover {
+    background-color: var(--darker-bg);
+}
+
+/* Coordinates display */
+.coordinates {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    padding: 8px;
+    background-color: var(--darker-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Image Analysis Section */
+.analysis-section {
+    margin-bottom: 2rem;
+}
+
+.analysis-section h2 {
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 1.2rem;
+}
+
+/* File upload */
+.custom-file-upload {
+    display: block;
+    padding: 1.2rem;
+    text-align: center;
+    background-color: var(--panel-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: var(--darker-bg);
+    border-color: var(--accent-color);
+}
+
+/* Terminal text */
+.terminal-text {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--text-primary);
+    background-color: var(--darker-bg);
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 3px solid var(--success-color);
+    line-height: 1.6;
+}
+
+.terminal-text::before {
+    content: "> ";
+    color: var(--success-color);
+}
+
+/* Digital counter */
+.digital-counter {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--text-primary);
+    background-color: var(--darker-bg);
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid var(--border-color);
+}
+
+/* Alert box */
+.cyber-alert {
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--text-primary);
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Overriding Bootstrap defaults */
+.bg-dark {
+    background-color: var(--darker-bg) !important;
+}
+
+.bg-primary {
+    background-color: var(--accent-color) !important;
+}
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap'); 
