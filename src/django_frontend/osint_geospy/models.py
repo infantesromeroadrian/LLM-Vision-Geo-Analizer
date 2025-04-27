@@ -17,6 +17,9 @@ class DroneImage(models.Model):
     image = models.ImageField(upload_to=get_upload_path)
     uploaded_at = models.DateTimeField(default=timezone.now)
     
+    # Backend reference
+    backend_image_id = models.CharField(max_length=255, blank=True, null=True)
+    
     # Metadata extracted from image
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)

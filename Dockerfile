@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender-dev \
     # Required for healthchecks
     curl \
+    dos2unix \
     # Cleanup
     && apt-get autoremove -y \
     && apt-get clean -y \
@@ -28,6 +29,9 @@ WORKDIR /app
 
 # Copy project files first
 COPY . /app/
+
+# Convert line endings for the entrypoint script
+RUN dos2unix /app/docker-entrypoint.sh
 
 # Install backend requirements
 RUN pip install --no-cache-dir -r requirements.txt

@@ -69,6 +69,10 @@ def analyze_image(request):
                     upload_data = response.json()
                     backend_image_id = upload_data.get("image_id")
                     
+                    # Save the backend image ID to our model
+                    drone_image.backend_image_id = backend_image_id
+                    drone_image.save()
+                    
                     # Analyze the image using backend
                     analysis_response = requests.post(f"{API_URL}/api/analyze/image/{backend_image_id}")
                     
@@ -212,3 +216,73 @@ def search_location(request):
                 messages.error(request, f"Error: {str(e)}")
     
     return redirect('osint_geospy:image_analysis')
+
+@csrf_exempt
+def chat_with_image(request):
+    """API endpoint to chat with the image using Gemini"""
+    if request.method == 'POST':
+        try:
+            # Get request data
+            data = json.loads(request.body)
+            user_message = data.get('message', '')
+            image_id = data.get('image_id', '')
+            
+            # Validate inputs
+            if not user_message or not image_id:
+                return JsonResponse({'error': 'Message and image_id are required'}, status=400)
+            
+            # Get the image
+            try:
+                image = DroneImage.objects.get(image_id=image_id)
+                
+                # Check if we have a backend image ID
+                if not image.backend_image_id:
+                    return JsonResponse({'error': 'Esta imagen no tiene un ID de backend. Intenta analizarla nuevamente.'}, status=400)
+                
+                backend_image_id = image.backend_image_id
+            except DroneImage.DoesNotExist:
+                return JsonResponse({'error': 'Image not found'}, status=404)
+                
+            # Get session ID
+            session_id = request.session.get('session_id', 'default_session')
+            
+            # Create new user message in database
+            user_chat_message = ChatMessage.objects.create(
+                role='user',
+                content=user_message,
+                session_id=session_id,
+                related_image=image
+            )
+            
+            # Call the backend API to get AI response
+            response = requests.post(
+                f"{API_URL}/api/chat/image/{backend_image_id}",
+                json={"message": user_message, "image_id": backend_image_id}
+            )
+            
+            if response.status_code == 200:
+                # Extract the response text
+                response_data = response.json()
+                ai_response = response_data.get('response', {}).get('llm_analysis', {}).get('response', 'No response received')
+                
+                # Create new AI message in database
+                ai_chat_message = ChatMessage.objects.create(
+                    role='assistant',
+                    content=ai_response,
+                    session_id=session_id,
+                    related_image=image
+                )
+                
+                return JsonResponse({
+                    'success': True,
+                    'response': ai_response
+                })
+            else:
+                return JsonResponse({
+                    'error': f"Backend API error: {response.text}"
+                }, status=response.status_code)
+                
+        except Exception as e:
+            return JsonResponse({'error': f"Error: {str(e)}"}, status=500)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)

@@ -10,4 +10,5 @@ urlpatterns = [
     path('drone-stream/', views.drone_stream, name='drone_stream'),
     path('interrogation/', views.interrogation, name='interrogation'),
     path('search-location/', views.search_location, name='search_location'),
+    path('api/chat-with-image/', views.chat_with_image, name='chat_with_image'),
 ] 

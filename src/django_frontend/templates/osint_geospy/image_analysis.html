@@ -41,7 +41,7 @@
             <div class="mt-3">
                 <h4 class="text-warning">SEARCH RESULTS:</h4>
                 
-                <select class="form-select mb-3" id="location_select">
+                <select class="form-select mb-3" id="location_select" aria-label="Select a location from search results">
                     <option value="">Select a location</option>
                     {% for result in request.session.location_results %}
                         <option value="{{ result.longitude }},{{ result.latitude }}">
@@ -118,7 +118,48 @@
                         {% if image.latitude and image.longitude %}
                             <div class="map-container">
                                 <h3>GEOLOCATION DATA</h3>
-                                <div id="analysis_map" style="width:100%; height:400px;"></div>
+                                <div id="analysis_map" 
+                                     data-latitude="{{ image.latitude }}" 
+                                     data-longitude="{{ image.longitude }}"
+                                     style="width:100%; height:400px;">
+                                </div>
+                            </div>
+                            
+                            <!-- New conversation box -->
+                            <div class="card-military mt-4">
+                                <div class="card-header">
+                                    <h3 class="mb-0">IMAGE INTERROGATION</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chat-container mb-3" style="height: 200px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                        <div class="assistant-message">
+                                            <strong>MISSION INTELLIGENCE SYSTEM READY</strong><br>
+                                            You can ask questions about this image, its geolocation data, or request analysis of specific features.
+                                        </div>
+                                        
+                                        <div id="chat-messages">
+                                            <!-- Messages will appear here -->
+                                        </div>
+                                        
+                                        <div id="typing-indicator" class="assistant-message" style="display:none;">
+                                            <div class="typing-animation">
+                                                <span class="dot"></span>
+                                                <span class="dot"></span>
+                                                <span class="dot"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <form id="chat-form" class="mb-0">
+                                        <div class="input-group">
+                                            <input type="text" id="message-input" class="form-control" 
+                                                placeholder="Ask a question about this image..." required>
+                                            <button type="submit" class="btn btn-military">
+                                                <i class="fas fa-paper-plane me-2"></i> SEND
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
@@ -288,26 +329,208 @@
             }
         }
         
-        // Analysis map if location data is present
+        // Analysis map initialization using data attributes
         const analysisMap = document.getElementById('analysis_map');
-        {% for image in recent_images %}
-            {% if image.image_id|stringformat:"s" == request.session.current_image_id and image.latitude and image.longitude %}
-                if (analysisMap) {
-                    mapboxgl.accessToken = '{{ mapbox_token }}';
-                    const map = new mapboxgl.Map({
-                        container: 'analysis_map',
-                        style: 'mapbox://styles/mapbox/satellite-streets-v11',
-                        center: [{{ image.longitude }}, {{ image.latitude }}],
-                        zoom: 13
-                    });
+        if (analysisMap && analysisMap.dataset.latitude && analysisMap.dataset.longitude) {
+            const lat = parseFloat(analysisMap.dataset.latitude);
+            const lon = parseFloat(analysisMap.dataset.longitude);
+            
+            mapboxgl.accessToken = '{{ mapbox_token }}';
+            const map = new mapboxgl.Map({
+                container: 'analysis_map',
+                style: 'mapbox://styles/mapbox/satellite-streets-v11',
+                center: [lon, lat],
+                zoom: 13
+            });
+            
+            // Add marker
+            new mapboxgl.Marker()
+                .setLngLat([lon, lat])
+                .addTo(map);
+        }
+
+        // Chat functionality
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        if (chatForm) {
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const message = messageInput.value.trim();
+                if (message) {
+                    // Add user message to chat
+                    const userMessageElement = document.createElement('div');
+                    userMessageElement.className = 'user-message';
+                    userMessageElement.textContent = message;
+                    chatMessages.appendChild(userMessageElement);
                     
-                    // Add marker
-                    new mapboxgl.Marker()
-                        .setLngLat([{{ image.longitude }}, {{ image.latitude }}])
-                        .addTo(map);
+                    // Clear input
+                    messageInput.value = '';
+                    
+                    // Show typing indicator
+                    typingIndicator.style.display = 'block';
+                    
+                    // Auto-scroll to bottom
+                    const chatContainer = userMessageElement.parentElement.parentElement;
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    
+                    // Get the current image ID from the URL or data attribute
+                    {% for image in recent_images %}
+                        {% if image.image_id|stringformat:"s" == request.session.current_image_id %}
+                            const imageId = '{{ image.image_id }}';
+                        {% endif %}
+                    {% endfor %}
+                    
+                    // Call the backend API using fetch
+                    fetch('{% url "osint_geospy:chat_with_image" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            image_id: imageId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hide typing indicator
+                        typingIndicator.style.display = 'none';
+                        
+                        // Create AI response element
+                        const aiMessageElement = document.createElement('div');
+                        aiMessageElement.className = 'assistant-message';
+                        
+                        if (data.success) {
+                            aiMessageElement.innerHTML = data.response;
+                        } else {
+                            // Mensaje amigable para errores específicos
+                            if (data.error && (data.error.includes('backend') || data.error.includes('Backend') || data.error.includes('ID'))) {
+                                aiMessageElement.innerHTML = `<span class="text-warning">
+                                    <strong>Aviso:</strong> Esta imagen fue analizada con una versión anterior del sistema.
+                                    Por favor, vuelve a analizarla para habilitar el chat.
+                                </span>`;
+                            } else {
+                                aiMessageElement.innerHTML = `<span class="text-danger">Error: ${data.error || 'Could not get a response'}</span>`;
+                            }
+                        }
+                        
+                        chatMessages.appendChild(aiMessageElement);
+                        
+                        // Auto-scroll to bottom
+                        const chatContainer = aiMessageElement.parentElement.parentElement;
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    })
+                    .catch(error => {
+                        // Hide typing indicator
+                        typingIndicator.style.display = 'none';
+                        
+                        // Create error message
+                        const aiMessageElement = document.createElement('div');
+                        aiMessageElement.className = 'assistant-message';
+                        
+                        // Mostrar mensaje amigable para el error de backend_image_id
+                        if (error.message.includes('backend') || error.message.includes('Backend')) {
+                            aiMessageElement.innerHTML = `<span class="text-warning">
+                                <strong>Aviso:</strong> Esta imagen fue analizada con una versión anterior del sistema.
+                                Por favor, vuelve a analizarla para habilitar el chat.
+                            </span>`;
+                        } else {
+                            aiMessageElement.innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
+                        }
+                        
+                        chatMessages.appendChild(aiMessageElement);
+                        
+                        // Auto-scroll to bottom
+                        const chatContainer = aiMessageElement.parentElement.parentElement;
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    });
                 }
-            {% endif %}
-        {% endfor %}
+            });
+        }
+        
+        // Helper function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     });
 </script>
+
+<style>
+    /* Styling for chat messages */
+    .user-message, .assistant-message {
+        max-width: 90%;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        word-wrap: break-word;
+    }
+    
+    .user-message {
+        background-color: rgba(30, 63, 102, 0.7);
+        margin-left: auto;
+        border-bottom-right-radius: 0;
+        text-align: right;
+    }
+    
+    .assistant-message {
+        background-color: rgba(30, 63, 32, 0.7);
+        margin-right: auto;
+        border-bottom-left-radius: 0;
+    }
+    
+    /* Typing indicator animation */
+    .typing-animation {
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .typing-animation .dot {
+        width: 6px;
+        height: 6px;
+        margin: 0 2px;
+        background-color: #a3c653;
+        border-radius: 50%;
+        opacity: 0.6;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+    
+    .typing-animation .dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .typing-animation .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-animation .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.6;
+        }
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
+</style>
 {% endblock %} 
